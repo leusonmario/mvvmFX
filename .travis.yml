@@ -1,8 +1,27 @@
+
+sudo: required
 language: java
 
 jdk:
     - oraclejdk8
     
-before_install:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
+
+
+script:
+  - mvn clean cobertura:cobertura -Dtest=FxmlViewLoaderTest#testControllerHasNoActionMethodThatIsDeclaredInFxml -DfailIfNoTests=false
+
+before_deploy:
+- tar -zcvf coverage-result.tar.gz /home/travis/build/leusonmario/mvvmFX/target/site/cobertura
+
+deploy:
+  provider: releases
+  api_key:
+    secure: "a24KQ1m85JKCdUhksSkALvvz2sTFtwC0V+HQLJpuvVhx3BL2Lmg9x9mm7fvHVJVMI3jBjzJZjmHr+WdXx0s1H/rHz1GWE+OUIaIwm+kcoBpldUoFOSOKJpLJybnCeHewF4gMPkrKPKfymt9keO8RkLjhxO9Wbr5R5uyW94Wl2bpu/+stSKtPxV/fkYVN0maQhLEVgr0oQAt/Eaeb2CKJSttRz7rdc0KC7VqRbvjyP/fPD1LASlzAXGE0yFsZ2lmHqsQiSbxc85oH8qbChZIeS9YO2y1j61okqGJjhV34c/hwcOGWH14pD7Rc0u+ci8Xsn5K3oDzI+7aP+aQwwCUKfbUFBVLpkEvgUgPYtPLfxCVe82noUBKzPXJ3nbwXfLkRJ6/XorsGQXqT1QHi2NbMLBvp2+XN/Je3FtS550mVPOraGaOZOehxPnlsstHMltiu94pjppaFiubUYLOB5KbLZ3Pa2NbHnbPbPSdRrfsGJPu+Cysyf0d70M+9y5XESPQl3QbetWD5VZhi2PcAxkaIlcKADC5Gj7ihEBLb7OkDKPIrrQiq19H0DeiyT+gTElVR2GKEVQkg9kw+oOekYT0SUzqwjMOIPE7oGNuWmjouajDbVZliNIpvdD+WMZiv0frcTJVKBCrxMFP9pAjsJUjfWcn+WTJ+QP9YUtkE0ONTvzc="
+
+
+  file: coverage-result.tar.gz
+  file_glob: true
+  overwrite: true
+  skip_cleanup: true
+  on:
+    tags: true
